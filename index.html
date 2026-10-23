@@ -95,13 +95,14 @@
       <a class="on" href="#">dictionary</a>
       <a id="docLink" target="_blank" rel="noopener">lexicon doc</a>
       <a id="aboutLink">about</a>
+      <a href="https://www.tiktok.com/@neoamant" target="_blank" rel="noopener">tiktok</a>
     </nav>
   </div>
 </header>
 
 <main>
   <h1>dictionary</h1>
-  <p class="lede">An interactive dictionary for Fraktala. Words are read live from the Fraktala Lexicon document, so anything added to the doc shows up here.</p>
+  <p class="lede">A dictionary for Fraktala (Gestalt-first conlang). Words are read live from the Fraktala Lexicon document, so anything added to the doc shows up here.</p>
 
   <div class="banner" id="banner"></div>
 
@@ -325,7 +326,7 @@ window.addEventListener("hashchange", routeHash);
 
 $("#aboutLink").onclick = ()=>{
   $("#dlgBody").innerHTML = `<button class="btn x" id="close">✕</button><h2>about</h2>
-    <p>This dictionary reads the <a href="${DOC_URL}" target="_blank" rel="noopener" style="color:var(--accent)">Fraktala Lexicon</a> Google Doc every ${POLL_MS/1000} seconds. Add a line like <i>Word (meaning)</i> to the doc and it appears here without touching this page's code.</p>
+    <p>This dictionary reads the <a href="${DOC_URL}" target="_blank" rel="noopener" style="color:var(--accent)">Fraktala Lexicon</a> Google Doc every ${POLL_MS/1000} seconds.</p>
     <p>The N'Ko forms use the Spanish-mapped N'Ko script, written right to left.</p>`;
   $("#dlg").showModal(); $("#close").onclick = ()=>$("#dlg").close();
 };
