@@ -4,29 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fraktala Dictionary</title>
+<link rel="icon" href="https://files.catbox.moe/i3he5s.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+NKo&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#000; --panel:#0e0e10; --panel2:#17171a; --line:#2a2a2f;
-    --fg:#f4f4f5; --muted:#9a9aa3; --accent:#a78bfa;
+    /* palette sampled from the logo: cream fur, rainbow outline, holographic disc */
+    --bg:#10081a; --panel:#1b1128; --panel2:#251836; --line:#3a2a52;
+    --fg:#fff0cf; --muted:#b9a9cf; --accent:#e056f0; --cream:#fff0cf;
+    --red:#ff2d2d; --orange:#ff9a00; --yellow:#ffe600; --green:#2bdc12; --blue:#2a6bff; --purple:#9a2bff; --cyan:#2fd9ec; --magenta:#f02fc2;
+    --rainbow:linear-gradient(90deg,var(--red),var(--orange),var(--yellow),var(--green),var(--blue),var(--purple));
+    --holo:linear-gradient(90deg,var(--magenta),var(--purple),var(--cyan),var(--yellow),var(--magenta));
   }
   *{box-sizing:border-box}
   html{color-scheme:dark}
-  body{margin:0;background:var(--bg);color:var(--fg);
+  body{margin:0;background:radial-gradient(60rem 30rem at 50% -8rem,#2a1646 0%,transparent 70%),var(--bg);color:var(--fg);
        font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
   a{color:inherit}
   .nko{font-family:"Noto Sans NKo","Segoe UI Historic","Ebrima","Noto Sans",sans-serif;direction:rtl;unicode-bidi:isolate}
 
-  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:5}
+  header{position:sticky;top:0;background:rgba(16,8,26,.88);backdrop-filter:blur(8px);z-index:5}
+  header::after{content:"";display:block;height:3px;background:var(--rainbow)}
   .bar{max-width:72rem;margin:0 auto;padding:.9rem 1.25rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
-  .logo{font-weight:700;font-size:1.15rem;text-decoration:none;letter-spacing:-.01em}
+  .logo{font-weight:700;font-size:1.15rem;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:.6rem}
+  .logo img{height:3rem;width:auto;display:block}
   nav{display:flex;gap:1.1rem;flex-wrap:wrap}
   nav a{color:var(--muted);text-decoration:none;cursor:pointer}
   nav a:hover,nav a.on{color:var(--fg)}
 
   main{max-width:72rem;margin:0 auto;padding:2rem 1.25rem 4rem}
-  h1{font-size:2.2rem;margin:0 0 .4rem;letter-spacing:-.02em}
+  h1{font-size:2.2rem;margin:0 0 .4rem;letter-spacing:-.02em;display:inline-block;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
   .lede{color:var(--muted);margin:0 0 1.5rem;max-width:42rem}
 
   .controls{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
@@ -35,24 +42,24 @@
   input[type=search]:focus{border-color:var(--accent)}
   select,button.btn{background:var(--panel);border:1px solid var(--line);color:var(--fg);padding:.65rem .8rem;
        border-radius:.6rem;font:inherit;cursor:pointer}
-  select:hover,button.btn:hover{border-color:#44444c}
+  select:hover,button.btn:hover{border-color:var(--accent)}
   .count{color:var(--muted);font-variant-numeric:tabular-nums;margin:.2rem 0 .8rem}
 
   .chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem}
   .chip{border:1px solid var(--line);background:transparent;color:var(--muted);padding:.25rem .75rem;border-radius:999px;
         font:inherit;font-size:.9rem;cursor:pointer}
-  .chip.on{color:#000;border-color:transparent}
+  .chip.on{color:#10081a;font-weight:600;border-color:transparent}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.75rem}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:.8rem;padding:1rem 1.05rem;cursor:pointer;
         text-align:left;color:inherit;font:inherit;transition:border-color .15s,transform .15s}
-  .card:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 0 0 1px var(--accent),0 6px 22px rgba(224,86,240,.18)}
   .card .top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
   .card .w{font-size:1.25rem;font-weight:650}
-  .card .nko{font-size:1.25rem;color:var(--accent)}
+  .card .nko{font-size:1.25rem;display:inline-block;background:var(--holo);-webkit-background-clip:text;background-clip:text;color:transparent}
   .tag{font-size:.78rem;color:var(--muted)}
-  .new{font-size:.7rem;font-weight:700;background:var(--accent);color:#000;padding:.05rem .4rem;border-radius:.4rem}
-  .card .d{color:#c9c9d0;margin-top:.35rem;font-size:.95rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .new{font-size:.7rem;font-weight:700;background:var(--rainbow);color:#10081a;padding:.05rem .4rem;border-radius:.4rem}
+  .card .d{color:#e9dcc0;margin-top:.35rem;font-size:.95rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 
   .list .card{display:flex;gap:1rem;align-items:baseline;border-radius:.5rem;padding:.55rem .9rem}
   .list .card .top{flex:0 0 14rem}
@@ -67,21 +74,23 @@
   .banner{background:#2a1517;border:1px solid #5b2227;color:#fecaca;padding:.8rem 1rem;border-radius:.6rem;margin-bottom:1rem;display:none}
   .empty{color:var(--muted);padding:2rem 0}
 
-  dialog{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:1rem;padding:0;max-width:34rem;width:calc(100% - 2rem)}
+  dialog{background:var(--cream);color:#2b1340;border:3px solid transparent;background-clip:padding-box;box-shadow:0 0 0 3px #9a2bff,0 0 40px rgba(224,86,240,.35);border-radius:1rem;padding:0;max-width:34rem;width:calc(100% - 2rem)}
   dialog::backdrop{background:rgba(0,0,0,.7)}
-  .m{padding:1.5rem}
+  .m{padding:1.5rem;--accent:#a21caf}
   .m h2{margin:0;font-size:2rem;letter-spacing:-.02em}
-  .m .nko{font-size:2.2rem;color:var(--accent);margin:.2rem 0}
+  .m .nko{font-size:2.2rem;display:inline-block;background:linear-gradient(90deg,#d61fa8,#7c1fe0,#0e9fb5);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.2rem 0}
   .m p{margin:.8rem 0 0;font-size:1.05rem}
-  .m .meta{color:var(--muted);font-size:.85rem;margin-top:1rem}
+  .m .meta{color:#6b5a7a;font-size:.85rem;margin-top:1rem}
   .m .x{float:right}
+  .m .btn{background:#2b1340;color:var(--cream);border-color:#2b1340}
+  ::selection{background:var(--magenta);color:#fff}
 </style>
 </head>
 <body>
 
 <header>
   <div class="bar">
-    <a class="logo" href="#">fraktala</a>
+    <a class="logo" href="#"><img src="https://files.catbox.moe/i3he5s.png" alt="" onerror="this.remove()"><span>fraktala</span></a>
     <nav>
       <a class="on" href="#">dictionary</a>
       <a id="docLink" target="_blank" rel="noopener">lexicon doc</a>
