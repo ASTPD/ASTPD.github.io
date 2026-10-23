@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fraktala Dictionary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+NKo&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000; --panel:#0e0e10; --panel2:#17171a; --line:#2a2a2f;
+    --fg:#f4f4f5; --muted:#9a9aa3; --accent:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:dark}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  a{color:inherit}
+  .nko{font-family:"Noto Sans NKo","Segoe UI Historic","Ebrima","Noto Sans",sans-serif;direction:rtl;unicode-bidi:isolate}
+
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:5}
+  .bar{max-width:72rem;margin:0 auto;padding:.9rem 1.25rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+  .logo{font-weight:700;font-size:1.15rem;text-decoration:none;letter-spacing:-.01em}
+  nav{display:flex;gap:1.1rem;flex-wrap:wrap}
+  nav a{color:var(--muted);text-decoration:none;cursor:pointer}
+  nav a:hover,nav a.on{color:var(--fg)}
+
+  main{max-width:72rem;margin:0 auto;padding:2rem 1.25rem 4rem}
+  h1{font-size:2.2rem;margin:0 0 .4rem;letter-spacing:-.02em}
+  .lede{color:var(--muted);margin:0 0 1.5rem;max-width:42rem}
+
+  .controls{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+  input[type=search]{flex:1 1 16rem;background:var(--panel);border:1px solid var(--line);color:var(--fg);
+       padding:.7rem .9rem;border-radius:.6rem;font:inherit;outline:none}
+  input[type=search]:focus{border-color:var(--accent)}
+  select,button.btn{background:var(--panel);border:1px solid var(--line);color:var(--fg);padding:.65rem .8rem;
+       border-radius:.6rem;font:inherit;cursor:pointer}
+  select:hover,button.btn:hover{border-color:#44444c}
+  .count{color:var(--muted);font-variant-numeric:tabular-nums;margin:.2rem 0 .8rem}
+
+  .chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem}
+  .chip{border:1px solid var(--line);background:transparent;color:var(--muted);padding:.25rem .75rem;border-radius:999px;
+        font:inherit;font-size:.9rem;cursor:pointer}
+  .chip.on{color:#000;border-color:transparent}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.75rem}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:.8rem;padding:1rem 1.05rem;cursor:pointer;
+        text-align:left;color:inherit;font:inherit;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .card .top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+  .card .w{font-size:1.25rem;font-weight:650}
+  .card .nko{font-size:1.25rem;color:var(--accent)}
+  .tag{font-size:.78rem;color:var(--muted)}
+  .new{font-size:.7rem;font-weight:700;background:var(--accent);color:#000;padding:.05rem .4rem;border-radius:.4rem}
+  .card .d{color:#c9c9d0;margin-top:.35rem;font-size:.95rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+
+  .list .card{display:flex;gap:1rem;align-items:baseline;border-radius:.5rem;padding:.55rem .9rem}
+  .list .card .top{flex:0 0 14rem}
+  .list .card .d{margin:0;-webkit-line-clamp:2}
+  .list{display:flex;flex-direction:column;gap:.35rem}
+  @media(max-width:640px){.list .card{flex-direction:column;gap:.1rem}.list .card .top{flex-basis:auto}}
+
+  .status{margin-top:2rem;color:var(--muted);font-size:.85rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+  .dot{width:.55rem;height:.55rem;border-radius:50%;background:#555}
+  .dot.ok{background:#4ade80}.dot.busy{background:#facc15;animation:p 1s infinite}.dot.err{background:#f87171}
+  @keyframes p{50%{opacity:.3}}
+  .banner{background:#2a1517;border:1px solid #5b2227;color:#fecaca;padding:.8rem 1rem;border-radius:.6rem;margin-bottom:1rem;display:none}
+  .empty{color:var(--muted);padding:2rem 0}
+
+  dialog{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:1rem;padding:0;max-width:34rem;width:calc(100% - 2rem)}
+  dialog::backdrop{background:rgba(0,0,0,.7)}
+  .m{padding:1.5rem}
+  .m h2{margin:0;font-size:2rem;letter-spacing:-.02em}
+  .m .nko{font-size:2.2rem;color:var(--accent);margin:.2rem 0}
+  .m p{margin:.8rem 0 0;font-size:1.05rem}
+  .m .meta{color:var(--muted);font-size:.85rem;margin-top:1rem}
+  .m .x{float:right}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <a class="logo" href="#">fraktala</a>
+    <nav>
+      <a class="on" href="#">dictionary</a>
+      <a id="docLink" target="_blank" rel="noopener">lexicon doc</a>
+      <a id="aboutLink">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>dictionary</h1>
+  <p class="lede">An interactive dictionary for Fraktala. Words are read live from the Fraktala Lexicon document, so anything added to the doc shows up here. Click a word to read more!</p>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="search words or meanings…" autocomplete="off" aria-label="Search">
+    <select id="view" aria-label="View"><option value="grid">Grid</option><option value="list">List</option></select>
+    <select id="sort" aria-label="Sort">
+      <option value="az">A–Z</option>
+      <option value="doc">Doc order</option>
+      <option value="new">Newest first</option>
+    </select>
+    <select id="script" aria-label="Script">
+      <option value="latin">Latin</option>
+      <option value="nko">N'Ko</option>
+      <option value="both">Both</option>
+    </select>
+    <button class="btn" id="refresh" title="Re-read the Google Doc now">↻ Refresh</button>
+  </div>
+
+  <div class="count" id="count">loading…</div>
+  <div class="chips" id="chips"></div>
+  <div id="out" class="grid"></div>
+
+  <div class="status"><span class="dot busy" id="dot"></span><span id="statusText">connecting to the doc…</span></div>
+</main>
+
+<dialog id="dlg"><div class="m" id="dlgBody"></div></dialog>
+
+<script>
+/* ============================== CONFIG ============================== */
+const DOC_ID = "1XCloPcCImW6TFCCKG0MCQe4VnaON1I-9fjBYwo0dzWs";
+const POLL_MS = 30000;          // how often to re-read the doc while the tab is open
+const DOC_URL = `https://docs.google.com/document/d/${DOC_ID}/edit`;
+
+/* ============================== STATE =============================== */
+let words = [];                 // [{id, word, def, section, order, isNew}]
+let activeSection = null;
+let lastHash = "";
+let timer = null;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===================== N'KO (Spanish-mapped) ======================== */
+/* Rules: vowels a e i o u; b/v ߓ; ch ߗ; c = ߛ before e/i else ߞ; qu = ߞ; g = ߞ߳ (gu before e/i drops u);
+   s/z = ߛ; x = ߞߛ; j = ߤ; y/ll = ߦ; rr = ߚ; h silent; ñ = ߢ; no stress marks; nasal codas plain ߣ. */
+const NK = {a:'ߊ',e:'ߋ',i:'ߌ',o:'ߏ',u:'ߎ',b:'ߓ',v:'ߓ',p:'ߔ',t:'ߕ',d:'ߘ',k:'ߞ',f:'ߝ',m:'ߡ',n:'ߣ','ñ':'ߢ',
+            l:'ߟ',r:'ߙ',j:'ߤ',y:'ߦ',w:'ߥ',s:'ߛ',z:'ߛ',x:'ߞߛ'};
+function toNko(word){
+  let s = word.toLowerCase().replace(/ü/g,'\u0001');
+  s = s.normalize('NFD').replace(/[\u0300-\u0302\u0304-\u036f]/g,'').normalize('NFC'); // strip stress marks, keep ñ
+  const a = [...s]; let out = '';
+  for (let i=0;i<a.length;i++){
+    const c=a[i], n=a[i+1]||'';
+    if (c==='\u0001'){ out+='ߎ'; continue; }
+    if (c==='c'){ if(n==='h'){out+='ߗ';i++;} else out += (n==='e'||n==='i') ? 'ߛ' : 'ߞ'; continue; }
+    if (c==='q'){ out+='ߞ'; if(n==='u') i++; continue; }
+    if (c==='g'){ out+='ߞ߳'; if(n==='u' && (a[i+2]==='e'||a[i+2]==='i')) i++; continue; }
+    if (c==='l' && n==='l'){ out+='ߦ'; i++; continue; }
+    if (c==='r' && n==='r'){ out+='ߚ'; i++; continue; }
+    if (c==='h') continue;
+    if (NK[c]){ out+=NK[c]; continue; }
+    if (/[\s]/.test(c)) out+=' ';
+    // hyphens, apostrophes and other punctuation are dropped
+  }
+  return out;
+}
+
+/* ====================== DOC FETCH + PARSING ========================= */
+async function fetchDocText(){
+  const exp = `https://docs.google.com/document/d/${DOC_ID}/export?format=txt&t=${Date.now()}`;
+  const attempts = [
+    exp,
+    "https://corsproxy.io/?" + encodeURIComponent(exp),
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(exp),
+  ];
+  let lastErr;
+  for (const url of attempts){
+    try{
+      const r = await fetch(url, {cache:"no-store"});
+      if (!r.ok) throw new Error("HTTP "+r.status);
+      const t = await r.text();
+      if (/<html|<!doctype/i.test(t.slice(0,300))) throw new Error("Got a web page instead of text (is the doc shared as 'Anyone with the link'?)");
+      return t.replace(/^\uFEFF/,'');
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error("fetch failed");
+}
+
+/* Understands lines like:
+     Iskarem (A memory surfacing without its context)
+     Iskarem - A memory ...      Iskarem: A memory ...      Iskarem — A memory ...
+   Short lines with no definition become section headings; long unmatched lines continue the previous definition. */
+function parseDoc(text){
+  const out = []; let section = ""; let order = 0;
+  const re = /^([\p{L}\p{M}'’\-]+(?:\s[\p{L}\p{M}'’\-]+)?)\s*(?:\(([\s\S]+)\)\s*$|[:–—]\s+(.+)$|\s-\s+(.+)$)/u;
+  for (let raw of text.split(/\r?\n/)){
+    let line = raw.replace(/^\s*(?:[•*·▪◦]|\d+[.)])\s*/,'').trim();
+    if (!line) continue;
+    const m = line.match(re);
+    if (m){
+      const def = (m[2]||m[3]||m[4]||"").trim();
+      out.push({id:m[1].trim().toLowerCase(), word:m[1].trim(), def, section, order:order++});
+    } else if (line.length <= 40 && !/[.!?]$/.test(line)){
+      section = line.replace(/[:：]\s*$/,'');
+    } else if (out.length){
+      out[out.length-1].def += " " + line;
+    }
+  }
+  // de-duplicate by id (later entries win), keep first position
+  const seen = new Map();
+  out.forEach(w => seen.set(w.id, w));
+  return [...seen.values()].map((w,i)=>({...w, order:i}));
+}
+
+/* ========================= SYNC / POLLING =========================== */
+function setStatus(kind, text){
+  $("#dot").className = "dot " + kind; $("#statusText").textContent = text;
+}
+function loadSeen(){ try{ return new Set(JSON.parse(localStorage.getItem("fraktala_seen")||"[]")); }catch(e){ return new Set(); } }
+function saveSeen(ids){ try{ localStorage.setItem("fraktala_seen", JSON.stringify(ids)); }catch(e){} }
+function cacheDoc(t){ try{ localStorage.setItem("fraktala_cache", t); }catch(e){} }
+function readCache(){ try{ return localStorage.getItem("fraktala_cache"); }catch(e){ return null; } }
+
+async function sync(manual=false){
+  setStatus("busy", manual ? "re-reading the doc…" : "checking the doc for updates…");
+  try{
+    const text = await fetchDocText();
+    $("#banner").style.display = "none";
+    const h = String(text.length) + ":" + text.slice(0,200) + text.slice(-200) + hashStr(text);
+    if (h !== lastHash){
+      const firstLoad = lastHash === "";
+      lastHash = h; cacheDoc(text);
+      const seen = loadSeen();
+      const prevIds = new Set(words.map(w=>w.id));
+      words = parseDoc(text).map(w => ({...w,
+        isNew: !firstLoad ? !prevIds.has(w.id) : (seen.size>0 && !seen.has(w.id))}));
+      saveSeen(words.map(w=>w.id));
+      render();
+      routeHash();
+    }
+    setStatus("ok", `synced ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} · ${words.length} words · auto-updates every ${POLL_MS/1000}s`);
+  }catch(err){
+    const cached = readCache();
+    if (cached && !words.length){
+      words = parseDoc(cached).map(w=>({...w,isNew:false})); render(); routeHash();
+    }
+    setStatus("err", "couldn't reach the doc" + (words.length ? " — showing the last saved copy" : ""));
+    const b = $("#banner");
+    b.style.display = "block";
+    b.innerHTML = `Couldn't read the Google Doc (${esc(err.message||err)}). Make sure its sharing is set to <b>Anyone with the link → Viewer</b>, then press Refresh.`;
+  }
+}
+function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return h; }
+function startPolling(){
+  clearInterval(timer);
+  timer = setInterval(()=>{ if(!document.hidden) sync(); }, POLL_MS);
+}
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) sync(); });
+
+/* ============================ RENDERING ============================= */
+function sectionColor(name){
+  let h=0; for(const c of name) h=(h*37+c.charCodeAt(0))%360;
+  return `hsl(${h} 70% 70%)`;
+}
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  const view = $("#view").value, sort = $("#sort").value, script = $("#script").value;
+
+  // section chips
+  const sections = [...new Set(words.map(w=>w.section).filter(Boolean))];
+  if (activeSection && !sections.includes(activeSection)) activeSection = null;
+  $("#chips").innerHTML = sections.length
+    ? sections.map(s=>`<button class="chip ${s===activeSection?'on':''}" data-s="${esc(s)}" style="${s===activeSection?`background:${sectionColor(s)}`:''}">${esc(s)}</button>`).join("")
+    : "";
+
+  let list = words.filter(w =>
+    (!activeSection || w.section===activeSection) &&
+    (!q || w.word.toLowerCase().includes(q) || w.def.toLowerCase().includes(q) || toNko(w.word).includes(q)));
+
+  if (sort==="az") list.sort((a,b)=>a.word.localeCompare(b.word,"es",{sensitivity:"base"}));
+  else if (sort==="new") list.sort((a,b)=>b.order-a.order);
+  else list.sort((a,b)=>a.order-b.order);
+
+  $("#count").textContent = `${list.length} / ${words.length}`;
+  const out = $("#out");
+  out.className = view==="list" ? "list" : "grid";
+  if (!list.length){ out.innerHTML = `<div class="empty">${words.length ? "No words match your search." : "No words found in the doc yet."}</div>`; return; }
+
+  out.innerHTML = list.map(w=>{
+    const latin = script!=="nko" ? `<span class="w">${esc(w.word)}</span>` : "";
+    const nko = script!=="latin" ? `<span class="nko">${toNko(w.word)}</span>` : "";
+    return `<button class="card" data-id="${esc(w.id)}">
+      <div class="top">${latin}${nko}
+        ${w.section?`<span class="tag" style="color:${sectionColor(w.section)}">${esc(w.section)}</span>`:""}
+        ${w.isNew?`<span class="new">new</span>`:""}</div>
+      <div class="d">${esc(w.def)}</div></button>`;
+  }).join("");
+}
+
+/* ============================ DETAIL VIEW =========================== */
+function openWord(id, pushHash=true){
+  const w = words.find(x=>x.id===id); if(!w) return;
+  $("#dlgBody").innerHTML = `
+    <button class="btn x" id="close">✕</button>
+    <h2>${esc(w.word)}</h2>
+    <div class="nko">${toNko(w.word)}</div>
+    <p>${esc(w.def)}</p>
+    <div class="meta">${w.section?esc(w.section)+" · ":""}entry #${w.order+1} in the lexicon${w.isNew?" · newly added":""}</div>`;
+  if (!$("#dlg").open) $("#dlg").showModal();
+  if (pushHash) history.replaceState(null,"","#"+encodeURIComponent(w.id));
+  $("#close").onclick = ()=>$("#dlg").close();
+}
+$("#dlg").addEventListener("close", ()=>history.replaceState(null,"",location.pathname+location.search));
+$("#dlg").addEventListener("click", e=>{ if(e.target===$("#dlg")) $("#dlg").close(); });
+function routeHash(){
+  const id = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  if (id) openWord(id,false);
+}
+window.addEventListener("hashchange", routeHash);
+
+$("#aboutLink").onclick = ()=>{
+  $("#dlgBody").innerHTML = `<button class="btn x" id="close">✕</button><h2>about</h2>
+    <p>This dictionary reads the <a href="${DOC_URL}" target="_blank" rel="noopener" style="color:var(--accent)">Fraktala Lexicon</a> Google Doc every ${POLL_MS/1000} seconds. Add a line like <i>Word (meaning)</i> to the doc and it appears here without touching this page's code.</p>
+    <p>The N'Ko forms use the Spanish-mapped N'Ko script, written right to left.</p>`;
+  $("#dlg").showModal(); $("#close").onclick = ()=>$("#dlg").close();
+};
+
+/* ============================== EVENTS ============================== */
+$("#docLink").href = DOC_URL;
+$("#q").addEventListener("input", render);
+["view","sort","script"].forEach(id=>{
+  $("#"+id).addEventListener("change", ()=>{ try{localStorage.setItem("fraktala_"+id,$("#"+id).value)}catch(e){}; render(); });
+  try{ const v=localStorage.getItem("fraktala_"+id); if(v) $("#"+id).value=v; }catch(e){}
+});
+$("#refresh").onclick = ()=>sync(true);
+$("#chips").addEventListener("click", e=>{
+  const b = e.target.closest(".chip"); if(!b) return;
+  activeSection = (activeSection===b.dataset.s) ? null : b.dataset.s; render();
+});
+$("#out").addEventListener("click", e=>{
+  const c = e.target.closest(".card"); if(c) openWord(c.dataset.id);
+});
+document.addEventListener("keydown", e=>{
+  if (e.key==="/" && document.activeElement!==$("#q") && !$("#dlg").open){ e.preventDefault(); $("#q").focus(); }
+});
+
+/* =============================== BOOT =============================== */
+sync(); startPolling();
+</script>
+</body>
+</html>
